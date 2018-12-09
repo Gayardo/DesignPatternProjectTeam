@@ -1,17 +1,23 @@
 package edu.insightr.gildedrose;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+
 public class Item {
 
     private String name;
     private int sellIn;
-
     private int quality;
 
+    public Item(){
+
+    }
     public Item(String name, int sellIn, int quality) {
         super();
         this.name = name;
         this.sellIn = sellIn;
         this.quality = quality;
+
     }
 
     public String getName() {
@@ -37,6 +43,8 @@ public class Item {
     public void setQuality(int quality) {
         this.quality = quality;
     }
+
+
 
     @Override
     public String toString() {

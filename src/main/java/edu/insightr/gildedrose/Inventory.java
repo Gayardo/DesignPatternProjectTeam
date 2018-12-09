@@ -1,5 +1,7 @@
 package edu.insightr.gildedrose;
 
+import javafx.scene.control.Button;
+
 public class Inventory {
 
     private Item[] items;
@@ -82,6 +84,14 @@ public class Inventory {
                 }
             }
         }
+    }
+
+    public Item[] getItems() {
+        return items;
+    }
+
+    public void setItems(Item[] items) {
+        this.items = items;
     }
 
     public static void main(String[] args) {
