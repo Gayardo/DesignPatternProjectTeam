@@ -3,20 +3,26 @@ package edu.insightr.gildedrose;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-
+import java.io.IOException;
 import java.io.FileReader;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.scene.chart.PieChart;
+
+import javafx.scene.Parent;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import  javafx.scene.layout.Pane;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
+import java.util.Date;
+import  javafx.stage.Stage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import  javafx.scene.Scene;
 
 
 public class Controler implements Initializable {
@@ -30,6 +36,12 @@ public class Controler implements Initializable {
     private TableColumn<Item,Integer> sellIn;
     @FXML
     private TableColumn<Item,Integer> quality;
+    @FXML
+    private TableColumn<Item,Integer> dateColBuy;
+    @FXML
+    private TableColumn<Item,Integer> idCol;
+    @FXML
+    private TableColumn<Item,Integer> colDateSell;
 
     @FXML
     private Button btnUpdate;
@@ -48,6 +60,19 @@ public class Controler implements Initializable {
     private TextField sellInInput;
     @FXML
     private Button btnAdd;
+    @FXML
+    private BarChart<?, ?> sellChart;
+    @FXML
+    private CategoryAxis x;
+    @FXML
+    private NumberAxis y;
+    @FXML
+    private BarChart<?, ?> dateChart;
+    @FXML
+    private CategoryAxis xa;
+    @FXML
+    private NumberAxis ya;
+
 
     public Inventory inventory;
 
@@ -77,9 +102,13 @@ public class Controler implements Initializable {
         initCols();
     }
     private void initCols(){
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         sellIn.setCellValueFactory(new PropertyValueFactory<>("sellIn"));
         quality.setCellValueFactory(new PropertyValueFactory<>("quality"));
+        dateColBuy.setCellValueFactory(new PropertyValueFactory<>("stringBuy"));
+        colDateSell.setCellValueFactory(new PropertyValueFactory<>("stringSell"));
+
     }
     private void loadData()
     {
@@ -103,7 +132,7 @@ public class Controler implements Initializable {
     public void onAdd()
     {
 
-        Item itemAdd = new Item(nameInput.getText(),Integer.parseInt(sellInInput.getText()),Integer.parseInt(quantityInput.getText()));
+        Item itemAdd = new Item(12000,nameInput.getText(),Integer.parseInt(sellInInput.getText()),Integer.parseInt(quantityInput.getText()),new Date());
         Item [] itemTemp= new Item[inventory.getItems().length+1];
 
         for(int i=0;i< inventory.getItems().length;i++)
@@ -140,7 +169,7 @@ public class Controler implements Initializable {
                 int quality =(int)(long)jsonObject.get("quality");
                 int sellIn =(int)(long)jsonObject.get("sellIn");
 
-                itemsTab[i]=new Item(name,sellIn,quality);
+                itemsTab[i]=new Item(i,name,sellIn,quality, new Date());
                 i++;
             }
 
@@ -218,5 +247,142 @@ public class Controler implements Initializable {
           monPane.getChildren().add(kindChart);
 
     }
+
+    public void changeScene(){
+
+        Item[] items =inventory.getItems();
+
+        String[] doneDate=new String[inventory.getItems().length];
+        int [] done = new int[inventory.getItems().length];
+        for(int i=0;i<done.length;i++){
+            done[i]=0;
+            doneDate[i]="zero";
+        }
+        int k=0;
+        int z=0;
+        for(int i=0; i < items.length;i++){
+
+            if(!alreadyDone(items[i].getSellIn(),done)){
+                done[k]=items[i].getSellIn();
+                k++;
+            }
+            if(!alreadyDoneString(items[i].getStringBuy(),doneDate)){
+
+                doneDate[z]=items[i].getStringBuy();
+                z++;
+            }
+        }
+
+        for(int i=0;i<doneDate.length;i++){
+            System.out.println("Here"+doneDate[i]);
+        }
+        for(int i=0;i<done.length;i++){
+            System.out.println("Here sell"+done[i]);
+        }
+
+
+        int tempTab[] = new int[items.length];
+        String tempStringTab[]= new String[items.length];
+        for(int i=0;i<items.length;i++){
+            tempTab[i]=items[i].getSellIn();
+            tempStringTab[i]=items[i].getStringBuy();
+        }
+
+        int sellIns[][] =new int [diffrentSell(done)][2];
+        String dates[]=new String[diffrentDates(doneDate)];
+        int datesNumbers[]=new  int[diffrentDates(doneDate)];
+        for(int i =0;i<diffrentSell(done);i++){
+            sellIns[i][0]=done[i];
+            sellIns[i][1]=Occurences(tempTab,done[i]);
+        }
+
+        for(int i =0;i<diffrentDates(doneDate);i++){
+            dates[i]=doneDate[i];
+            datesNumbers[i]=OccurencesString(tempStringTab,doneDate[i]);
+            System.out.println(dates[i]+ " "+datesNumbers[i]);
+        }
+
+
+        XYChart.Series set1 =new XYChart.Series<>();
+
+        for(int i=0;i<diffrentSell(done);i++){
+            set1.getData().add(new XYChart.Data(new Integer(sellIns[i][0]).toString() ,sellIns[i][1])) ;
+        }
+
+        sellChart.getData().addAll(set1);
+
+        XYChart.Series set2 =new XYChart.Series<>();
+
+        for(int i=0;i<diffrentDates(doneDate);i++){
+            set2.getData().add(new XYChart.Data(dates [i],datesNumbers[i])) ;
+        }
+
+        dateChart.getData().addAll(set2);
+    }
+    public  boolean alreadyDone(int x,int done[])
+    {
+        boolean fait=false;
+        for(int i=0;i<done.length;i++){
+            if(done[i]==x){
+                fait=true;
+            }
+        }
+        return fait;
+    }
+    public  boolean alreadyDoneString(String date,String doneString[])
+    {
+        boolean fait=false;
+
+        for(int i=0;i<doneString.length;i++){
+
+            if(doneString[i].equals(date)){
+
+                fait=true;
+            }
+        }
+        return fait;
+    }
+
+    public   int diffrentSell(int [] done){
+        int different=done.length;
+
+        for(int i=0;i<done.length;i++){
+            if(done[i]==0){
+                return i;
+            }
+        }
+        return different;
+
+    }
+    public   int diffrentDates(String [] doneDate){
+        int different=doneDate.length;
+
+        for(int i=0;i<doneDate.length;i++){
+            if(doneDate[i].equals("zero")){
+                return i;
+            }
+        }
+        return different;
+
+    }
+    public  int Occurences(int tab[], int x){
+        int compteur=0;
+        for(int i=0;i<tab.length;i++){
+            if(x==tab[i]){
+                compteur++;
+            }
+        }
+        return compteur;
+    }
+    public  int OccurencesString(String tab[], String chaine){
+        int compteur=0;
+        for(int i=0;i<tab.length;i++){
+            if(chaine.equals(tab[i])){
+                compteur++;
+            }
+        }
+        return compteur;
+    }
+
 }
 

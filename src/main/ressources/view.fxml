@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -7,36 +8,71 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="690.0" prefWidth="1167.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.insightr.gildedrose.Controler">
+<AnchorPane prefHeight="695.0" prefWidth="1169.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.insightr.gildedrose.Controler">
    <children>
-      <TableView id="liste" fx:id="items" layoutX="59.0" layoutY="112.0" prefHeight="222.0" prefWidth="527.0">
-        <columns>
-          <TableColumn id="name" fx:id="name" prefWidth="338.0" text="Name" />
-          <TableColumn id="name" fx:id="quality" prefWidth="102.0" text="Quality" />
-            <TableColumn fx:id="sellIn" prefWidth="86.0" text="Sell In" />
-        </columns>
-      </TableView>
-      <Label layoutX="59.0" layoutY="47.0" prefHeight="21.0" prefWidth="146.0" text="Inventory" textAlignment="CENTER">
-         <font>
-            <Font size="34.0" />
-         </font>
-      </Label>
-      <Button fx:id="btnUpdate" layoutX="59.0" layoutY="357.0" mnemonicParsing="false" onAction="#onEdit" text="Update" />
-      <Button fx:id="btnLoad" layoutX="491.0" layoutY="357.0" mnemonicParsing="false" onAction="#loadFromFile" text="Load JSON" />
-      <Label fx:id="number" layoutX="420.0" layoutY="72.0" text="number of items: " />
-      <VBox alignment="BASELINE_LEFT" layoutX="586.0" layoutY="25.0" prefHeight="302.0" prefWidth="582.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="kinds of items" textAlignment="CENTER" wrappingWidth="574.96484375">
+      <ScrollPane hbarPolicy="ALWAYS" layoutX="5.0" layoutY="6.0" pannable="true" prefHeight="695.0" prefWidth="1170.0" vbarPolicy="ALWAYS">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="2110.0" prefWidth="1133.0">
+            <children>
+            <TableView id="liste" fx:id="items" layoutX="205.0" layoutY="122.0" prefHeight="222.0" prefWidth="671.0">
+               <columns>
+                  <TableColumn fx:id="idCol" prefWidth="75.0" text="id" />
+                  <TableColumn id="name" fx:id="name" prefWidth="289.0" text="Name" />
+                  <TableColumn id="name" fx:id="quality" prefWidth="75.0" text="Quality" />
+                  <TableColumn fx:id="sellIn" prefWidth="82.0" text="Sell In" />
+                  <TableColumn fx:id="dateColBuy" text="Date Buy" />
+                  <TableColumn fx:id="colDateSell" prefWidth="75.0" text="Date Sell" />
+               </columns>
+            </TableView>
+            <Label layoutX="205.0" layoutY="33.0" prefHeight="21.0" prefWidth="146.0" text="Inventory" textAlignment="CENTER">
+               <font>
+                  <Font size="34.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnUpdate" layoutX="205.0" layoutY="351.0" mnemonicParsing="false" onAction="#onEdit" text="Update" />
+            <Button fx:id="btnLoad" layoutX="784.0" layoutY="357.0" mnemonicParsing="false" onAction="#loadFromFile" text="Load JSON" />
+            <Label fx:id="number" layoutX="760.0" layoutY="62.0" text="number of items: " />
+            <Text layoutX="70.0" layoutY="601.0" strokeType="OUTSIDE" strokeWidth="0.0" text="kinds of items" textAlignment="CENTER" wrappingWidth="574.96484375">
                <font>
                   <Font name="Arial Black" size="40.0" />
                </font>
             </Text>
-            <Pane fx:id="monPane" prefHeight="99.0" prefWidth="582.0" />
-         </children>
-      </VBox>
-      <TextField fx:id="nameInput" layoutX="73.0" layoutY="501.0" />
-      <TextField fx:id="sellInInput" layoutX="304.0" layoutY="501.0" />
-      <TextField fx:id="quantityInput" layoutX="73.0" layoutY="577.0" />
-      <Button fx:id="btnAdd" layoutX="304.0" layoutY="577.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
+            <VBox alignment="BASELINE_LEFT" layoutX="282.0" layoutY="602.0" prefHeight="302.0" prefWidth="582.0">
+               <children>
+                  <Pane fx:id="monPane" prefHeight="99.0" prefWidth="582.0" />
+               </children>
+            </VBox>
+            <TextField fx:id="nameInput" layoutX="211.0" layoutY="470.0" />
+            <TextField fx:id="sellInInput" layoutX="589.0" layoutY="470.0" prefHeight="31.0" prefWidth="73.0" />
+            <TextField fx:id="quantityInput" layoutX="716.0" layoutY="470.0" prefHeight="31.0" prefWidth="60.0" />
+            <Button fx:id="btnAdd" layoutX="831.0" layoutY="470.0" mnemonicParsing="false" onAction="#onAdd" text="Add" />
+            <Button fx:id="btnGraphics" layoutX="493.0" layoutY="357.0" mnemonicParsing="false" onAction="#changeScene" text="Graphiques" />
+                  <Label layoutX="211.0" layoutY="408.0" prefHeight="21.0" prefWidth="146.0" text="Add" textAlignment="CENTER">
+                     <font>
+                        <Font size="34.0" />
+                     </font>
+                  </Label>
+                  <BarChart fx:id="sellChart" layoutX="16.0" layoutY="1151.0" title="Number Of Each Sell In">
+                    <xAxis>
+                      <CategoryAxis label="Sell In" side="BOTTOM" fx:id="x" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="y" label="number of Items" side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+                  <BarChart fx:id="dateChart" layoutX="641.0" layoutY="1161.0" title="Number Of Each date">
+                     <xAxis>
+                        <CategoryAxis label="Dates" side="BOTTOM" fx:id="xa" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="ya" label="number of Items" side="LEFT" />
+                     </yAxis>
+                  </BarChart>
+            </children>
+            </AnchorPane>
+         </content>
+
+      </ScrollPane>
+
    </children>
 </AnchorPane>

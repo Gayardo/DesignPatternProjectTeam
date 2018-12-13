@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 
+    public Stage primaryStage2;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -17,7 +18,7 @@ public class Main extends Application {
         primaryStage.setTitle("List of Items");
         primaryStage.setScene(new Scene(root, 1200, 600));
         primaryStage.show();
-
+        primaryStage2=primaryStage;
     }
 
     public static void main(String[] args) {
@@ -25,6 +26,7 @@ public class Main extends Application {
         launch(args);
 
     }
+
 
 
 }
